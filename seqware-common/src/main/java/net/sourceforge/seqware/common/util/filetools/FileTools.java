@@ -828,16 +828,34 @@ public class FileTools {
 
     ReturnValue ret = RunTools.runCommand(theCommand.toArray(new String[0]));
 
+    ArrayList<String> theCommand2 = new ArrayList<String>();
+    theCommand2 = new ArrayList<String>();
+    theCommand2.add("bash");
+    theCommand2.add("-lc");
+    theCommand2.add("stat " + path);
+    theCommand2.add(" | ");
+    theCommand2.add("awk");
+    theCommand2.add("'{-print $5}'");
+
+    
+    //    ReturnValue ret2 = RunTools.runCommand(theCommand2.toArray(new String[0]));
+
     if (ret.getExitStatus() == ReturnValue.SUCCESS) {
 
       String stdout = ret.getStdout();
       stdout = stdout.trim();
       boolean result = false;
-      Pattern p = Pattern.compile(".*Uid:\\s*\\(\\s*\\d*\\s*/\\s*" + programRunner + "\\s*\\).*", Pattern.DOTALL);
+      //      Pattern p = Pattern.compile(".*Uid:\\s*\\(\\s*\\d*\\s*/\\s*" + programRunner + "\\s*\\).*", Pattern.DOTALL);
+      Pattern p = Pattern.compile(".*" + programRunner + ".*", Pattern.DOTALL);
       Matcher m = p.matcher(stdout);
       if (m.find()) {
         result = true;
       }
+
+      Log.error("XXXXX MODIFIED FileTools to return ("+result+") on silly owner test: "+
+		"the programRunner("+programRunner+") and the string is: "+stdout);
+
+
       return (result);
     } else {
       Log.error("Can't figure out the file ownership " + ret.getStderr());
